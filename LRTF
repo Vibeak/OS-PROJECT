@@ -1,0 +1,106 @@
+#include<stdlib.h>
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/types.h>
+
+struct Student
+{
+int ID;int AT;   //AT= Arrival time
+int CT;         //CT= Time for completion
+int WT;         //WT= Waiting time
+int TT;         //TT= Total time
+int FTT;        //FTT=Time taken for food
+int X;
+}s[3];
+
+int totaltime=0;
+int T=0; 
+int Avg_Wt;
+int TotalTAT;
+int max_time(int at)  
+{ 
+    int max = 0, i; 
+    for (i = 0; i < 3; i++) 
+    { 
+        if (s[i].AT <= at)   
+	{                     
+          if (s[i].FTT > s[max].FTT)  
+           max = i;                                          
+           else if(s[max].FTT==s[i].FTT)  
+           {
+            if(s[max].ID>s[i].ID)
+            max=i;
+	    }
+        } 
+     } 
+return max;
+}
+int process() 
+{ 
+   
+    int Ind; 
+    int i = s[0].AT; 
+ printf("\t\tLongest Remaining Time First (LRTF) Scheduling\n\n\n");
+   while (1) { 
+        if (i <= 3) { 
+            Ind = max_time(i); } 
+	else
+            Ind = max_time(3); 
+        printf("Process P%d is  executing at time %d  ",Ind,totaltime);
+        s[Ind].FTT -= 1; 
+        totaltime += 1; 
+        i++;  
+        if (s[Ind].FTT == 0) 
+	{ 
+           s[Ind].CT = totaltime;
+           printf("\tProcess P%d is completed at:%d",Ind,totaltime);
+        } 
+        printf("\n");  
+        if (totaltime == T) 
+            break; 
+    } 
+}
+int main()
+{
+int i=0;
+s[0].ID=2132;
+s[1].ID=2102;
+s[2].ID=2453;
+
+s[0].FTT=2;
+s[1].FTT=4;
+s[2].FTT=8;		
+
+for(i=0;i<3;i++)
+{
+	T+=s[i].FTT;
+}
+printf("\n");
+process();
+	
+int Total_WT=0;
+for(i=0;i<3;i++)
+{
+	s[i].TT=s[i].CT - s[i].AT;	
+	s[i].WT= s[i].TT -s[i].X;
+	Total_WT= Total_WT+s[i].WT;
+} 
+int totalTAT=0;
+for(i=0;i<3;i++)
+{
+	totalTAT= totalTAT +s[i].TT;
+}
+printf ("\nS.N.\tStudent_ID\t AT\tFTT\t\ WT\t TAT\t CT\n"); 
+for(i=0;i<3;i++)
+{
+printf ("S%d\t%d\t\t %d\t %d\t %d\t %d\t %d\n",i,s[i].ID,s[i].AT,s[i].X,s[i].WT,s[i].TT,s[i].CT); 
+}
+
+Avg_Wt=(int)Total_WT/3;   
+TotalTAT=(int)totalTAT/3;
+  
+printf("\n\nTOTAL WAITING TIME->%d\n",Total_WT);
+printf("\nAVERAGE WAITING TIME->%d\n",Avg_Wt);
+printf("\nTURN AROUND TIME->%d\n",totalTAT);
+printf("\nAVERAGE TURN AROUND TIME->%d\n",TotalTAT);
+}
